@@ -1,6 +1,7 @@
 package com.revature.eval.java.core;
 
 import java.time.temporal.Temporal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,8 +31,21 @@ public class EvaluationService {
 	 * @return
 	 */
 	public String acronym(String phrase) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		
+		String[] splitPhrase = phrase.toUpperCase().split("[ -]");
+		
+		char[] acronym = new char[splitPhrase.length];
+		
+		for(int x = 0; x < splitPhrase.length; x++) 
+		{
+			char charToAdd = splitPhrase[x].charAt(0);
+			acronym[x] = charToAdd;
+			
+		}
+		
+		String returnChars = new String(acronym);
+		
+		return returnChars;
 	}
 
 	/**
@@ -116,8 +130,64 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int getScrabbleScore(String string) {
+		
+		String upperCased = string.toUpperCase();
+		
+		HashMap<Character, Integer> scoreMap = new HashMap<Character, Integer>();
+		
+		scoreMap.put('A', 1);
+		scoreMap.put('E', 1);
+		scoreMap.put('I', 1);
+		scoreMap.put('O', 1);
+		scoreMap.put('U', 1);
+		scoreMap.put('L', 1);
+		scoreMap.put('N', 1);
+		scoreMap.put('R', 1);
+		scoreMap.put('S', 1);
+		scoreMap.put('T', 1);
+		
+		scoreMap.put('D', 2);
+		scoreMap.put('G', 2);
+		
+		scoreMap.put('B', 3);
+		scoreMap.put('C', 3);
+		scoreMap.put('M', 3);
+		scoreMap.put('P', 3);
+		
+		scoreMap.put('F', 4);
+		scoreMap.put('H', 4);
+		scoreMap.put('V', 4);
+		scoreMap.put('W', 4);
+		scoreMap.put('Y', 4);
+		
+		scoreMap.put('K', 5);
+		
+		scoreMap.put('J', 8);
+		scoreMap.put('X', 8);
+		
+		scoreMap.put('Q', 10);
+		scoreMap.put('Z', 10);
+		
+		int score = 0;
+		
+		
+		
+		for(int x = 0; x < string.length(); x++) 
+		{
+			try {
+				Character lookup = upperCased.charAt(x);
+				Integer value = scoreMap.get(lookup);
+				score+=value;
+				//score = score + (int) scoreMap.get((Character) string.charAt(x));
+			}
+			catch (Exception e) {
+				continue;
+			}
+			
+		}
+		
 		// TODO Write an implementation for this method declaration
-		return 0;
+		return score;
 	}
 
 	/**
@@ -209,8 +279,59 @@ public class EvaluationService {
 		private List<T> sortedList;
 
 		public int indexOf(T t) {
+			
+			int startingIndex = (sortedList.size() - 1)/2;
+			
+			int x = startingIndex;
+			
+			List<T> subArray = this.getSortedList();
+			
+			while(true) 
+			{
+				
+				if (t instanceof Integer ) {
+					Integer val = (Integer) subArray.get(x);
+					if (val < (Integer)t) 
+					{
+						subArray = subArray.subList(x+1, subArray.size());
+					}
+					else if (val > (Integer)t)
+					{
+						subArray = subArray.subList(0,  x); 
+					}
+					else 
+					{
+						break;
+						
+					}
+				}
+				
+				else if (t instanceof String) 
+				{
+					String val = (String) sortedList.get(x);
+					int result = val.compareTo((String) t);
+					if (result < 0) // val > t
+					{
+						subArray = subArray.subList(x+1, subArray.size());
+					}
+					else if (result > 0) // val < t
+					{
+						subArray = subArray.subList(0,  x); 
+					}
+					else 
+					{
+						break;
+						
+					}
+					
+				}
+				
+				x = (subArray.size() - 1)/2;
+				
+			}
+			
 			// TODO Write an implementation for this method declaration
-			return 0;
+			return x;
 		}
 
 		public BinarySearch(List<T> sortedList) {
@@ -225,6 +346,8 @@ public class EvaluationService {
 		public void setSortedList(List<T> sortedList) {
 			this.sortedList = sortedList;
 		}
+		
+		
 
 	}
 
@@ -266,8 +389,38 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isArmstrongNumber(int input) {
+		String intToStr = String.valueOf(input);
+		
+		int numOfDigits = intToStr.length();
+		
+		int result = 0;
+		
+		for(int x = 0; x < numOfDigits; x++) 
+		{
+			int val = (intToStr.charAt(x) - '0');
+			int temp = val;
+			for(int y = 0; y < numOfDigits - 1; y++) 
+			{
+				temp*=val;
+				
+			}
+			result+=temp;
+			
+		}
+		
+		if (result == input) 
+		{
+			return true;
+			
+		}
+		else 
+		{
+			return false;
+			
+		}
+		
 		// TODO Write an implementation for this method declaration
-		return false;
+		
 	}
 
 	/**
@@ -415,6 +568,8 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isValidIsbn(String string) {
+		
+		
 		// TODO Write an implementation for this method declaration
 		return false;
 	}
