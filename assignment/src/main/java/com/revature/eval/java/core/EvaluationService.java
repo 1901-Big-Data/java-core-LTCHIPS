@@ -1,5 +1,6 @@
 package com.revature.eval.java.core;
 
+import java.io.Serializable;
 import java.time.temporal.Temporal;
 import java.util.HashMap;
 import java.util.List;
@@ -34,18 +35,17 @@ public class EvaluationService {
 		
 		String[] splitPhrase = phrase.toUpperCase().split("[ -]");
 		
-		char[] acronym = new char[splitPhrase.length];
+		StringBuilder acronym = new StringBuilder();
+		
 		
 		for(int x = 0; x < splitPhrase.length; x++) 
 		{
 			char charToAdd = splitPhrase[x].charAt(0);
-			acronym[x] = charToAdd;
+			acronym.append(charToAdd);
 			
 		}
 		
-		String returnChars = new String(acronym);
-		
-		return returnChars;
+		return acronym.toString();
 	}
 
 	/**
@@ -98,18 +98,21 @@ public class EvaluationService {
 		}
 
 		public boolean isEquilateral() {
-			// TODO Write an implementation for this method declaration
-			return false;
+			return ((this.sideOne == this.sideTwo) 
+					&& (this.sideTwo == this.sideThree) 
+					&& (this.sideThree == this.sideOne)) ? true : false ;
 		}
 
 		public boolean isIsosceles() {
-			// TODO Write an implementation for this method declaration
-			return false;
+			return ((this.sideOne == this.sideTwo) 
+					|| (this.sideTwo == this.sideThree) 
+					|| (this.sideThree == this.sideOne)) ? true : false ;
 		}
 
 		public boolean isScalene() {
-			// TODO Write an implementation for this method declaration
-			return false;
+			return ((this.sideOne != this.sideTwo) 
+					&& (this.sideTwo != this.sideThree) 
+					&& (this.sideThree != this.sideOne)) ? true : false ;
 		}
 
 	}
@@ -288,8 +291,8 @@ public class EvaluationService {
 			
 			while(true) 
 			{
-				
-				if (t instanceof Integer ) {
+				if (t instanceof Integer ) 
+				{
 					Integer val = (Integer) subArray.get(x);
 					if (val < (Integer)t) 
 					{
@@ -301,11 +304,9 @@ public class EvaluationService {
 					}
 					else 
 					{
-						break;
-						
+						break;			
 					}
 				}
-				
 				else if (t instanceof String) 
 				{
 					String val = (String) sortedList.get(x);
@@ -313,17 +314,17 @@ public class EvaluationService {
 					if (result < 0) // val > t
 					{
 						subArray = subArray.subList(x+1, subArray.size());
+						
 					}
 					else if (result > 0) // val < t
 					{
 						subArray = subArray.subList(0,  x); 
 					}
-					else 
+					else
 					{
 						break;
 						
-					}
-					
+					}					
 				}
 				
 				x = (subArray.size() - 1)/2;
@@ -397,27 +398,22 @@ public class EvaluationService {
 		
 		for(int x = 0; x < numOfDigits; x++) 
 		{
+			//convert char to integer
 			int val = (intToStr.charAt(x) - '0');
 			int temp = val;
+			
+			//silly integer power calculation
 			for(int y = 0; y < numOfDigits - 1; y++) 
 			{
 				temp*=val;
 				
 			}
+			
 			result+=temp;
 			
 		}
-		
-		if (result == input) 
-		{
-			return true;
-			
-		}
-		else 
-		{
-			return false;
-			
-		}
+
+		return result == input ? true : false;
 		
 		// TODO Write an implementation for this method declaration
 		
@@ -570,8 +566,49 @@ public class EvaluationService {
 	public boolean isValidIsbn(String string) {
 		
 		
-		// TODO Write an implementation for this method declaration
-		return false;
+		
+		char [] strChar = string.toCharArray();
+		
+		int result = 0;
+		
+		int y = 10;
+		
+		for(int x = 0; x < string.length(); x++) 
+		{
+			//skip dashes
+			if (strChar[x] == '-') 
+			{
+				continue;
+			}
+			
+			//case when character isn't a number
+			if (!Character.isDigit(strChar[x])) 
+			{
+				if (strChar[x] == 'X') 
+				{
+					result+=10;
+					
+				}
+				else 
+				{
+					result = -1;
+					break;
+				}
+			}
+			else 
+			{
+				int charAsNum = strChar[x] - '0';
+				
+				result+=charAsNum*(y);
+				
+			}
+			
+			y--;
+			
+		}
+		
+		return ((result % 11) == 0) ? true : false; 
+		
 	}
 
 	/**
@@ -691,9 +728,40 @@ public class EvaluationService {
 	 * @param string
 	 * @return
 	 */
-	public int solveWordProblem(String string) {
-		// TODO Write an implementation for this method declaration
-		return 0;
+	public int solveWordProblem(String string) 
+	{
+		//We don't really need the "What is..." part of the string
+		String problemContents = string.substring(8, string.length());
+		
+		String[] splitString = problemContents.split("[\\s?]+");
+		
+		int leftVal = Integer.parseInt(splitString[0]);
+		
+		int rightVal = Integer.parseInt(splitString[splitString.length - 1]);
+		
+		int result = 0;
+		
+		if (splitString[1].compareTo("plus") == 0) 
+		{
+			result = leftVal + rightVal;
+			
+		}
+		else if (splitString[1].compareTo("minus") == 0) 
+		{
+			result = leftVal - rightVal;
+			
+		}
+		else if (splitString[1].compareTo("multiplied") == 0) 
+		{
+			result = leftVal * rightVal;
+			
+		}
+		else if (splitString[1].compareTo("divided") == 0) 
+		{
+			result = leftVal / rightVal;
+		}
+		
+		return result;
 	}
 
 }
