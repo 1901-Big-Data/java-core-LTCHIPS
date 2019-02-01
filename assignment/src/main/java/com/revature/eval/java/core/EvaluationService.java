@@ -1,10 +1,15 @@
 package com.revature.eval.java.core;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.time.temporal.Temporal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class EvaluationService {
 
@@ -225,8 +230,37 @@ public class EvaluationService {
 	 * NANP-countries, only 1 is considered a valid country code.
 	 */
 	public String cleanPhoneNumber(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		
+		//strip any unnecessary characters from the phone numbers
+		//also strip letters to catch any "bad" phone numbers
+		String[] phnumArray = string.split("[+()-\\.\\sa-zA-Z]+");
+		
+		String phnumStrCleaned = "";
+		
+		for(String x : phnumArray) 
+		{
+			phnumStrCleaned+=x;
+			
+		}
+		
+		if(phnumStrCleaned.length() >= 12) 
+		{
+			throw new IllegalArgumentException("Not a real phone number! (Too long)");
+			
+		}
+		if (phnumStrCleaned.length() == 11)
+		{
+			phnumStrCleaned.substring(1);
+			
+		}
+		if (phnumStrCleaned.length() < 10)
+		{
+			throw new IllegalArgumentException("Not a real phone number! (Too short or there were letters inside of it)");
+			
+		}
+		
+		
+		return phnumStrCleaned;
 	}
 
 	/**
@@ -239,8 +273,25 @@ public class EvaluationService {
 	 * @return
 	 */
 	public Map<String, Integer> wordCount(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		Map<String, Integer> mapOfWords = new HashMap<String, Integer>();
+		
+		String[] words = string.split("[\\n\\s,]+");
+		
+		for (String x : words) 
+		{
+			Integer putAttempt = mapOfWords.get(x);
+				
+			if (putAttempt == null) 
+			{
+				mapOfWords.put(x, 1);
+			}
+			else 
+			{
+				mapOfWords.replace(x, putAttempt + 1);
+				
+			}
+		}
+		return mapOfWords;
 	}
 
 	/**
@@ -286,6 +337,7 @@ public class EvaluationService {
 			int startingIndex = (sortedList.size() - 1)/2;
 			
 			int x = startingIndex;
+			int baseIndex = 0;
 			
 			List<T> subArray = this.getSortedList();
 			
@@ -297,6 +349,7 @@ public class EvaluationService {
 					if (val < (Integer)t) 
 					{
 						subArray = subArray.subList(x+1, subArray.size());
+						baseIndex+=(x+1);
 					}
 					else if (val > (Integer)t)
 					{
@@ -314,7 +367,7 @@ public class EvaluationService {
 					if (result < 0) // val > t
 					{
 						subArray = subArray.subList(x+1, subArray.size());
-						
+						baseIndex+=(x+1);
 					}
 					else if (result > 0) // val < t
 					{
@@ -331,8 +384,7 @@ public class EvaluationService {
 				
 			}
 			
-			// TODO Write an implementation for this method declaration
-			return x;
+			return x + baseIndex;
 		}
 
 		public BinarySearch(List<T> sortedList) {
@@ -369,9 +421,53 @@ public class EvaluationService {
 	 * @param string
 	 * @return
 	 */
-	public String toPigLatin(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+	
+	public String toPigLatin(String string) 
+	{
+		
+		String[] splitStr = string.split(" ");
+		
+		//HashSet<Character> consonants = new HashSet<Character>(Arrays.asList('b', 'c', 'd','f','g','h', 'j', 
+			//'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'x', 'z'));
+		
+		HashSet<Character> vowels = new HashSet<Character>(Arrays.asList('a', 'e', 'i', 'o', 'u', 'y', 'w'));
+		
+		StringBuilder result = new StringBuilder();
+		
+		StringBuilder intermediateSB = new StringBuilder();
+		
+		for (String x : splitStr) 
+		{
+			if (!vowels.contains(x.charAt(0))) 
+			{	
+				intermediateSB.append(x.charAt(0));
+				char[] subStr = x.substring(1).toCharArray();
+				for (Character y : subStr) 
+				{
+					if (vowels.contains(y)) 
+					{
+						break;
+					}
+					else 
+					{
+						intermediateSB.append(y);
+					}
+				}
+				result.append(x.substring(intermediateSB.length()));
+				result.append(intermediateSB.toString());
+			}
+			else 
+			{	
+				result.append(x);
+			}
+			
+			result.append("ay ");
+			
+			intermediateSB.delete(0, intermediateSB.length());
+		}
+		
+		return result.toString().substring(0, result.length() - 1);
+		
 	}
 
 	/**
@@ -399,10 +495,11 @@ public class EvaluationService {
 		for(int x = 0; x < numOfDigits; x++) 
 		{
 			//convert char to integer
+			
 			int val = (intToStr.charAt(x) - '0');
 			int temp = val;
 			
-			//silly integer power calculation
+			//silly integer power calculation because Math class didn't have one for ints >:(
 			for(int y = 0; y < numOfDigits - 1; y++) 
 			{
 				temp*=val;
@@ -414,9 +511,7 @@ public class EvaluationService {
 		}
 
 		return result == input ? true : false;
-		
-		// TODO Write an implementation for this method declaration
-		
+
 	}
 
 	/**
@@ -565,8 +660,6 @@ public class EvaluationService {
 	 */
 	public boolean isValidIsbn(String string) {
 		
-		
-		
 		char [] strChar = string.toCharArray();
 		
 		int result = 0;
@@ -584,13 +677,13 @@ public class EvaluationService {
 			//case when character isn't a number
 			if (!Character.isDigit(strChar[x])) 
 			{
-				if (strChar[x] == 'X') 
+				if (strChar[x] == 'X' && x == string.length() - 1) 
 				{
-					result+=10;
-					
+					result+=10;	
 				}
 				else 
 				{
+					//character was invalid, no need to bother with the rest of the array...
 					result = -1;
 					break;
 				}
@@ -656,6 +749,8 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int getSumOfMultiples(int i, int[] set) {
+		
+		
 		// TODO Write an implementation for this method declaration
 		return 0;
 	}
@@ -697,8 +792,45 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isLuhnValid(String string) {
-		// TODO Write an implementation for this method declaration
-		return false;
+		
+		String[] trimmedStr = string.split("\\s+");
+		
+		String newStr = String.join("", trimmedStr);
+		
+		if (newStr.length() <= 1) 
+		{
+			return false;
+		}
+		
+		int result = 0;
+		
+		int y = 1;
+		
+		for(int x = newStr.length() - 1; x >= 0; x--) 
+		{
+			int num = newStr.charAt(x) - '0';
+			
+			//if num is not actually a number
+			if (num < 0 || num > 9)
+			{
+				return false;
+				
+			}
+			
+			 //odd indexes represent the numbers that need to be doubled
+			if (y % 2 == 0)
+			{
+				num*=2;
+				if (num > 9)
+					num-=9;
+				
+			}
+			result+=(num);
+			y++;
+		}
+		
+		return (result % 10 == 0) ? true : false;
+		
 	}
 
 	/**
