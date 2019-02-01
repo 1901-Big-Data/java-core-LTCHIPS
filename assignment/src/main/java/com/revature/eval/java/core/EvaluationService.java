@@ -430,7 +430,8 @@ public class EvaluationService {
 		//HashSet<Character> consonants = new HashSet<Character>(Arrays.asList('b', 'c', 'd','f','g','h', 'j', 
 			//'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'x', 'z'));
 		
-		HashSet<Character> vowels = new HashSet<Character>(Arrays.asList('a', 'e', 'i', 'o', 'u', 'y', 'w'));
+		//PURE VOWELS. PUUUUUUUURRRRRRRRRRREEEEEEEEEEEEEEEE
+		HashSet<Character> vowels = new HashSet<Character>(Arrays.asList('a', 'e', 'i', 'o', 'u'));
 		
 		StringBuilder result = new StringBuilder();
 		
@@ -444,11 +445,11 @@ public class EvaluationService {
 				char[] subStr = x.substring(1).toCharArray();
 				for (Character y : subStr) 
 				{
-					if (vowels.contains(y)) 
+					if (vowels.contains(y))
 					{
 						break;
 					}
-					else 
+					else
 					{
 						intermediateSB.append(y);
 					}
@@ -456,9 +457,10 @@ public class EvaluationService {
 				result.append(x.substring(intermediateSB.length()));
 				result.append(intermediateSB.toString());
 			}
-			else 
+			else
 			{	
 				result.append(x);
+				intermediateSB.append(x.charAt(0));
 			}
 			
 			result.append("ay ");
@@ -525,7 +527,6 @@ public class EvaluationService {
 	 * @return
 	 */
 	public List<Long> calculatePrimeFactorsOf(long l) {
-		// TODO Write an implementation for this method declaration
 		return null;
 	}
 
@@ -557,15 +558,69 @@ public class EvaluationService {
 	 */
 	static class RotationalCipher {
 		private int key;
+		
+		private static String alphabet = "abcdefghijklmnopqrstuvwxyz";
+		
+		private static String capAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 		public RotationalCipher(int key) {
 			super();
 			this.key = key;
 		}
 
-		public String rotate(String string) {
-			// TODO Write an implementation for this method declaration
-			return null;
+		public String rotate(String string) 
+		{
+			StringBuilder sb = new StringBuilder();
+			
+			for (int x = 0; x < string.length(); x++) 
+			{
+				int index = 0;
+				for (int y = 0; y < alphabet.length(); y++) 
+				{	
+					
+					if(Character.isUpperCase(string.charAt(x))) 
+					{
+						if (Character.compare(string.charAt(x), capAlphabet.charAt(y)) == 0) 
+						{
+							index = y;
+							int newIndex = index + key;
+							
+							if  (newIndex > 25) 
+							{
+								newIndex-=26;
+							}
+							sb.append(capAlphabet.charAt(newIndex));
+							break;
+						}
+					}
+					else if (Character.isLowerCase(string.charAt(x))) 
+					{
+						if (Character.compare(string.charAt(x), alphabet.charAt(y)) == 0) 
+						{
+							index = y;
+							
+							int newIndex = index + key;
+							
+							if  (newIndex > 25) 
+							{
+								newIndex-=26;
+							}
+							sb.append(alphabet.charAt(newIndex));
+							break;
+						}
+					}
+					else 
+					{
+						sb.append(string.charAt(x));
+						break;
+					}
+					
+				}
+			}
+			
+			
+			
+			return sb.toString();
 		}
 
 	}
@@ -583,8 +638,38 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int calculateNthPrime(int i) {
+		
+		int x = 1;
+		ArrayList<Integer> primes = new ArrayList<Integer>();
+		if (i < 1) 
+		{
+			throw new IllegalArgumentException("Illegal argument provided");
+		}
+		while(true) 
+		{
+			ArrayList<Integer> factors = new ArrayList<Integer>();
+			for (int y = 1; y <= x; y++) 
+			{
+				if (x % y == 0) 
+				{
+					factors.add(y);
+				}
+				
+			}
+			if (factors.size() == 2) 
+			{
+				primes.add(x);
+			}
+			
+			if(primes.size() == i) 
+			{
+				break;
+			}
+			x++;
+		}
+		
 		// TODO Write an implementation for this method declaration
-		return 0;
+		return  primes.get(i - 1);
 	}
 
 	/**
@@ -613,15 +698,57 @@ public class EvaluationService {
 	 */
 	static class AtbashCipher {
 
+		private static String alphabet = "abcdefghijklmnopqrstuvwxyz";
+		
+		private static String alphabetRev = "zyxwvutsrqponmlkjihgfedcba";
 		/**
 		 * Question 13
 		 * 
 		 * @param string
 		 * @return
 		 */
-		public static String encode(String string) {
-			// TODO Write an implementation for this method declaration
-			return null;
+		public static String encode(String string) 
+		{
+			StringBuilder sb = new StringBuilder();
+			
+			String strlower = string.toLowerCase();
+			
+			int seqCount = 0;
+			
+			for (int x = 0; x < strlower.length(); x++) 
+			{
+				if (seqCount % 5 == 0 && seqCount != 0) 
+				{
+					sb.append(' ');
+					seqCount = 0;
+				}
+				if (Character.isDigit(strlower.charAt(x))) 
+				{
+					sb.append(strlower.charAt(x));
+					seqCount+=1;
+					continue;
+				}
+				if (Character.isWhitespace(strlower.charAt(x)) || !Character.isLetterOrDigit(strlower.charAt(x))) 
+				{
+					continue;
+				}
+				
+				int index = 0;
+				
+				for (int y = 0; y < alphabet.length(); y++) 
+				{
+					if (Character.compare(strlower.charAt(x), alphabet.charAt(y)) == 0) 
+					{
+						index = y;
+						seqCount+=1;
+						break;
+					}
+				}
+				
+				sb.append(alphabet.charAt((alphabet.length() - 1) - index));
+			}
+		
+			return sb.toString().trim();
 		}
 
 		/**
@@ -630,9 +757,39 @@ public class EvaluationService {
 		 * @param string
 		 * @return
 		 */
-		public static String decode(String string) {
-			// TODO Write an implementation for this method declaration
-			return null;
+		public static String decode(String string) 
+		{
+			StringBuilder sb = new StringBuilder();
+			
+			String strlower = string.toLowerCase();
+			
+			for (int x = 0; x < strlower.length(); x++) 
+			{
+				if (Character.isDigit(strlower.charAt(x))) 
+				{
+					sb.append(strlower.charAt(x));
+					continue;
+				}
+				if (Character.isWhitespace(strlower.charAt(x)) || !Character.isLetterOrDigit(strlower.charAt(x))) 
+				{
+					continue;
+				}
+				
+				int index = 0;
+				
+				for (int y = 0; y < alphabetRev.length(); y++) 
+				{
+					if (Character.compare(strlower.charAt(x), alphabetRev.charAt(y)) == 0) 
+					{
+						index = y;
+						break;
+					}
+				}
+				
+				sb.append(alphabetRev.charAt((alphabetRev.length() - 1) - index));
+			}
+		
+			return sb.toString().trim();
 		}
 	}
 
