@@ -1,7 +1,5 @@
 package com.revature.eval.java.core;
 
-import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.time.temporal.*;
 import java.util.ArrayList;
@@ -142,6 +140,8 @@ public class EvaluationService {
 		
 		String upperCased = string.toUpperCase();
 		
+		//This is probably overkill, but it felt natural to go with a hashmap...
+		
 		HashMap<Character, Integer> scoreMap = new HashMap<Character, Integer>();
 		
 		scoreMap.put('A', 1);
@@ -187,7 +187,6 @@ public class EvaluationService {
 				Character lookup = upperCased.charAt(x);
 				Integer value = scoreMap.get(lookup);
 				score+=value;
-				//score = score + (int) scoreMap.get((Character) string.charAt(x));
 			}
 			catch (Exception e) {
 				continue;
@@ -195,7 +194,6 @@ public class EvaluationService {
 			
 		}
 		
-		// TODO Write an implementation for this method declaration
 		return score;
 	}
 
@@ -233,15 +231,14 @@ public class EvaluationService {
 	public String cleanPhoneNumber(String string) {
 		
 		//strip any unnecessary characters from the phone numbers
-		//also strip letters to catch any "bad" phone numbers
+		//also strip letters to catch any phone numbers with letters in them
 		String[] phnumArray = string.split("[+()-\\.\\sa-zA-Z]+");
 		
 		String phnumStrCleaned = "";
 		
 		for(String x : phnumArray) 
-		{
-			phnumStrCleaned+=x;
-			
+		{	
+			phnumStrCleaned+=x;	
 		}
 		
 		if(phnumStrCleaned.length() >= 12) 
@@ -259,7 +256,6 @@ public class EvaluationService {
 			throw new IllegalArgumentException("Not a real phone number! (Too short or there were letters inside of it)");
 			
 		}
-		
 		
 		return phnumStrCleaned;
 	}
@@ -333,11 +329,9 @@ public class EvaluationService {
 	static class BinarySearch<T> {
 		private List<T> sortedList;
 
-		public int indexOf(T t) {
-			
-			int startingIndex = (sortedList.size() - 1)/2;
-			
-			int x = startingIndex;
+		public int indexOf(T t) 
+		{	
+			int x = (sortedList.size() - 1)/2;
 			int baseIndex = 0;
 			
 			List<T> subArray = this.getSortedList();
@@ -425,14 +419,10 @@ public class EvaluationService {
 	
 	public String toPigLatin(String string) 
 	{
-		
 		String[] splitStr = string.split(" ");
 		
-		//HashSet<Character> consonants = new HashSet<Character>(Arrays.asList('b', 'c', 'd','f','g','h', 'j', 
-			//'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'x', 'z'));
-		
 		//PURE VOWELS. PUUUUUUUURRRRRRRRRRREEEEEEEEEEEEEEEE
-		HashSet<Character> vowels = new HashSet<Character>(Arrays.asList('a', 'e', 'i', 'o', 'u'));
+		List<Character> vowels = new ArrayList<Character>(Arrays.asList('a', 'e', 'i', 'o', 'u'));
 		
 		StringBuilder result = new StringBuilder();
 		
@@ -444,16 +434,25 @@ public class EvaluationService {
 			{	
 				intermediateSB.append(x.charAt(0));
 				char[] subStr = x.substring(1).toCharArray();
-				for (Character y : subStr) 
+				for (int y = 0; y < subStr.length; y++) 
 				{
-					if (vowels.contains(y))
+					if (vowels.contains(subStr[y]))
 					{
-						break;
+						//super special case when dealing with "u"
+						if (Character.compare(intermediateSB.charAt(intermediateSB.length() - 1), 'q') == 0
+								&& subStr[y] == 'u') 
+						{
+							intermediateSB.append(subStr[y]);
+							break;
+						}
+						else
+							break;
 					}
 					else
 					{
-						intermediateSB.append(y);
+						intermediateSB.append(subStr[y]);
 					}
+					
 				}
 				result.append(x.substring(intermediateSB.length()));
 				result.append(intermediateSB.toString());
@@ -731,6 +730,8 @@ public class EvaluationService {
 		private static String alphabet = "abcdefghijklmnopqrstuvwxyz";
 		
 		private static String alphabetRev = "zyxwvutsrqponmlkjihgfedcba";
+		
+		
 		/**
 		 * Question 13
 		 * 
@@ -821,6 +822,8 @@ public class EvaluationService {
 		
 			return sb.toString().trim();
 		}
+		
+		
 	}
 
 	/**
@@ -914,6 +917,10 @@ public class EvaluationService {
 			{
 				lettersUsed.add(x);
 			}
+			if (lettersUsed.size() == 26) 
+			{
+				break;
+			}
 		}
 		
 		return (lettersUsed.size() == 26) ? true : false;
@@ -991,7 +998,6 @@ public class EvaluationService {
 			
 		}
 		
-		// TODO Write an implementation for this method declaration
 		return result;
 	}
 
@@ -1048,15 +1054,15 @@ public class EvaluationService {
 		
 		for(int x = newStr.length() - 1; x >= 0; x--) 
 		{
-			int num = newStr.charAt(x) - '0';
 			
-			//if num is not actually a number
-			if (num < 0 || num > 9)
+			if (!Character.isDigit(newStr.charAt(x)))
 			{
 				return false;
 				
 			}
 			
+			int num = newStr.charAt(x) - '0';
+
 			 //odd indexes represent the numbers that need to be doubled
 			if (y % 2 == 0)
 			{
