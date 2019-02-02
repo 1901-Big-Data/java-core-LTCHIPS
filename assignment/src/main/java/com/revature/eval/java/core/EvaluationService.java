@@ -2,7 +2,8 @@ package com.revature.eval.java.core;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
-import java.time.temporal.Temporal;
+import java.time.LocalDateTime;
+import java.time.temporal.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -526,8 +527,37 @@ public class EvaluationService {
 	 * @param l
 	 * @return
 	 */
-	public List<Long> calculatePrimeFactorsOf(long l) {
-		return null;
+	public List<Long> calculatePrimeFactorsOf(long l) 
+	{
+		List<Long> primeFactors = new ArrayList<Long>();
+		
+		long z = l;
+		for (long x = 2; x <= l; x++ ) 
+		{
+			if (l % x == 0) 
+			{
+				//we already know 1 divides x
+				int primeCheck = 1;
+				for (long y = 2; y <= x; y++) 
+				{
+					if (x % y == 0) 
+					{
+						primeCheck+=1;
+					}
+				}
+				if (primeCheck == 2) 
+				{
+					//cool, let's figure out how many times this prime goes into z
+					while(z%x == 0) 
+					{
+						z/=x;
+						primeFactors.add(x);
+					}
+				}
+			}
+		}
+		
+		return primeFactors;
 	}
 
 	/**
@@ -874,9 +904,19 @@ public class EvaluationService {
 	 * @param string
 	 * @return
 	 */
-	public boolean isPangram(String string) {
-		// TODO Write an implementation for this method declaration
-		return false;
+	public boolean isPangram(String string) 
+	{	
+		Set<Character> lettersUsed = new HashSet<Character>();
+		
+		for (Character x : string.toLowerCase().toCharArray()) 
+		{
+			if (Character.isAlphabetic(x)) 
+			{
+				lettersUsed.add(x);
+			}
+		}
+		
+		return (lettersUsed.size() == 26) ? true : false;
 	}
 
 	/**
@@ -888,8 +928,34 @@ public class EvaluationService {
 	 * @return
 	 */
 	public Temporal getGigasecondDate(Temporal given) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		
+		//long seconds = 1_000_000_000;
+		
+		LocalDateTime ldt;
+		
+		
+		if(given.isSupported(ChronoField.HOUR_OF_DAY)) 
+		{
+			ldt = LocalDateTime.of(given.get(ChronoField.YEAR), 
+					given.get(ChronoField.MONTH_OF_YEAR), given.get(ChronoField.DAY_OF_MONTH), 
+					given.get(ChronoField.HOUR_OF_DAY), given.get(ChronoField.MINUTE_OF_HOUR),
+					given.get(ChronoField.SECOND_OF_MINUTE));
+		}
+		
+		else 
+		{
+			ldt = LocalDateTime.of(given.get(ChronoField.YEAR),
+					given.get(ChronoField.MONTH_OF_YEAR), given.get(ChronoField.DAY_OF_MONTH),
+					0, 0, 0);
+			
+		}
+		
+		ldt = ldt.plus(11574, ChronoUnit.DAYS);
+		ldt = ldt.plus(1, ChronoUnit.HOURS);
+		ldt = ldt.plus(46, ChronoUnit.MINUTES);
+		ldt = ldt.plus(40, ChronoUnit.SECONDS);
+
+		return ldt;
 	}
 
 	/**
@@ -906,10 +972,27 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int getSumOfMultiples(int i, int[] set) {
+		Set<Integer> setOfMultiples = new HashSet<Integer>();
 		
+		int result = 0;
+		for (int x = 1; x < i; x++) 
+		{
+			for(int y : set) 
+			{
+				if (x % y == 0) 
+				{
+					if(setOfMultiples.add(x)) 
+					{
+						result+=x;
+					}
+					
+				}
+			}
+			
+		}
 		
 		// TODO Write an implementation for this method declaration
-		return 0;
+		return result;
 	}
 
 	/**
