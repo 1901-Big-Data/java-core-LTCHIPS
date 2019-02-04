@@ -12,6 +12,14 @@ import java.util.Set;
 
 public class EvaluationService {
 
+	
+	/*
+	 * NOTE: I had been committing stuff to master the whole time since I didn't see much point in doing so for assignments.
+	 * Turns out that's you can't do master -> master for pull requests, so now there's a dev branch! 
+	 * With that being said, I apologize for any inconviences that may arise from my lack of foresight.
+	 */
+	
+	
 	/**
 	 * 1. Without using the StringBuilder or StringBuffer class, write a method that
 	 * reverses a String. Example: reverse("example"); -> "elpmaxe"
